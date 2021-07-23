@@ -3,7 +3,7 @@ package org.example
 import kotlin.concurrent.thread
 
 fun getUserFromNetworkCallback(userId: String, onUserReady: (User) -> Unit) {
-    thread {
+    thread(isDaemon = false) {
         Thread.sleep(1000)
         val thName = Thread.currentThread().name
         val user = User(userId, "Hello")
