@@ -9,7 +9,8 @@ private fun getUserFromNetworkCallback(
             try {
                 Thread.sleep(1000)
                 val thName = Thread.currentThread().name
-                val user = User("1", "Hi")
+                println("Thread: $thName")
+                val user = User(userId, "Hi")
                 onUserResponse(user, null)
             } catch (error: Throwable) {
                 onUserResponse(null, error)
