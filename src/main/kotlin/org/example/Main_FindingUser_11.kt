@@ -31,7 +31,7 @@ private fun checkUserExists(user: User, users: List<User>): Boolean {
 }
 
 @ObsoleteCoroutinesApi
-private fun getUserFromNetwork(userId: String): Deferred<User> = GlobalScope.async {
+private fun getUserFromNetwork(userId: String, parentScope: CoroutineScope): Deferred<User> = GlobalScope.async {
     Thread.sleep(3000)
     val thName = Thread.currentThread().name
     println("Thread - Network - $thName")
@@ -43,11 +43,11 @@ private fun getUserFromNetwork(userId: String): Deferred<User> = GlobalScope.asy
 fun main() {
     val userId = "513";
 
-    GlobalScope.launch {
+    val launch = GlobalScope.launch {
         val thName = Thread.currentThread().name
         println("Thread - Finding User - $thName")
 
-        val user = getUserFromNetwork(userId)
+        val user = getUserFromNetwork(userId, GlobalScope)
         val users = readUsers(this::class.java.getResource("/users.txt").path)
 
         val isExist = checkUserExists(user.await(), users.await())
