@@ -3,7 +3,7 @@ package org.example
 import kotlinx.coroutines.*
 import java.io.File
 
-@kotlinx.coroutines.ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
 private fun readUsers(path: String) =
     GlobalScope.async {
         delay(1000)
@@ -30,7 +30,7 @@ private fun checkUserExists(user: User, users: List<User>): Boolean {
     return user in users
 }
 
-@kotlinx.coroutines.ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
 private fun getUserFromNetwork(userId: String): Deferred<User> = GlobalScope.async {
     Thread.sleep(3000)
     val thName = Thread.currentThread().name
@@ -38,6 +38,8 @@ private fun getUserFromNetwork(userId: String): Deferred<User> = GlobalScope.asy
     User(userId, "Mike")
 }
 
+@ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 fun main() {
     val userId = "513";
 
