@@ -5,9 +5,8 @@ import kotlin.concurrent.thread
 private fun getUserFromNetworkCallback(userId: String, onUserReady: (User) -> Unit) {
     thread(isDaemon = false) {
         Thread.sleep(1000)
-        val thName = Thread.currentThread().name
         val user = User(userId, "Hello")
-        println("Thread fun: $thName")
+        println("Thread fun: ${Thread.currentThread().name}")
         onUserReady(user)
     }
     println("fun end")
@@ -16,10 +15,8 @@ private fun getUserFromNetworkCallback(userId: String, onUserReady: (User) -> Un
 fun main() {
 
     getUserFromNetworkCallback("1") { user ->
-        val thName = Thread.currentThread().name
-        println("Thread: $thName, User: $user")
+        println("Thread: ${Thread.currentThread().name}, User: $user")
     }
-    val thName = Thread.currentThread().name
-    println("Thread main: $thName")
+    println("Thread main: ${Thread.currentThread().name}")
     println("main end")
 }

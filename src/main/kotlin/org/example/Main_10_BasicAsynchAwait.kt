@@ -7,8 +7,7 @@ import kotlinx.coroutines.launch
 
 private fun getUserFromNetwork(userId: String): Deferred<User> = GlobalScope.async {
     Thread.sleep(3000)
-    val thName = Thread.currentThread().name
-    println("Thread fun: $thName")
+    println("Thread fun: ${Thread.currentThread().name}")
     User(userId, "Hello")
 }
 
@@ -17,13 +16,11 @@ fun main() {
 
     GlobalScope.launch {
         val user = getUserFromNetwork(userId)
-        val thName = Thread.currentThread().name
-        println("Thread launch: $thName")
+        println("Thread launch: ${Thread.currentThread().name}")
         println(user.await())
     }
 
-    val thName = Thread.currentThread().name
-    println("Thread main: $thName")
+    println("Thread main: ${Thread.currentThread().name}")
 
     Thread.sleep(5000)
 }

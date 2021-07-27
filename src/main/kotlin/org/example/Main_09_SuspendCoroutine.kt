@@ -13,16 +13,14 @@ suspend fun <T : Any> getValue(provider: () -> T): T =
 
 fun execBackground(action: suspend () -> Unit) {
     GlobalScope.launch {
-        val thName = Thread.currentThread().name
-        println("Thread execBackground: $thName")
+        println("Thread execBackground: ${Thread.currentThread().name}")
         action()
     }
 }
 
 fun execMain(action: suspend () -> Unit) {
     GlobalScope.launch(context = Dispatchers.Main) {
-        val thName = Thread.currentThread().name
-        println("Thread execMain: $thName")
+        println("Thread execMain: ${Thread.currentThread().name}")
         action()
     }
 }

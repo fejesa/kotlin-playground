@@ -6,19 +6,16 @@ import kotlinx.coroutines.launch
 
 private suspend fun getUserSuspended(userId: String): User {
     delay(1000)
-    val thName = Thread.currentThread().name
-    println("Thread fun: $thName")
+    println("Thread fun: ${Thread.currentThread().name}")
     return User(userId, "Hello")
 }
 
 fun main() {
     GlobalScope.launch {
-        val thName = Thread.currentThread().name
         val user = getUserSuspended("1")
-        println("Thread launch: $thName $user")
+        println("Thread launch: ${Thread.currentThread().name} $user")
     }
 
-    val thName = Thread.currentThread().name
-    println("Thread main: $thName")
+    println("Thread main: ${Thread.currentThread().name}")
     Thread.sleep(3000)
 }

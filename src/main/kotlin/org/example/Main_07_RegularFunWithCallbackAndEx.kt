@@ -8,8 +8,7 @@ private fun getUserFromNetworkCallback(
         thread(isDaemon = false) {
             try {
                 Thread.sleep(1000)
-                val thName = Thread.currentThread().name
-                println("Thread: $thName")
+                println("Thread: ${Thread.currentThread().name}")
                 val user = User(userId, "Hi")
                 onUserResponse(user, null)
             } catch (error: Throwable) {
@@ -23,11 +22,9 @@ fun main() {
         user, error ->
         user?.run (::println)
         error?.printStackTrace()
-        val thName = Thread.currentThread().name
-        println("Thread callback: $thName")
+        println("Thread callback: ${Thread.currentThread().name}")
     }
 
-    val thName = Thread.currentThread().name
-    println("Thread main: $thName")
+    println("Thread main: ${Thread.currentThread().name}")
     println("main end")
 }
