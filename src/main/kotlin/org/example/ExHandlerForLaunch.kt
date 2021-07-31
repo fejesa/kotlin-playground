@@ -4,7 +4,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.lang.IllegalArgumentException
 
 @DelicateCoroutinesApi
 fun main() {
@@ -18,4 +17,5 @@ fun main() {
 
         job.join()
     }
+    println("Finish")
 }
