@@ -1,7 +1,9 @@
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@DelicateCoroutinesApi
 fun main() {
     with(GlobalScope) {
         val parentJob = launch {

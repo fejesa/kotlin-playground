@@ -1,8 +1,8 @@
 package org.example
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.coroutines.suspendCoroutine
 
@@ -11,6 +11,7 @@ suspend fun <T : Any> getValue(provider: () -> T): T =
         continuation.resumeWith(Result.runCatching { provider() })
     }
 
+@DelicateCoroutinesApi
 fun execBackground(action: suspend () -> Unit) {
     GlobalScope.launch {
         println("Thread execBackground: ${Thread.currentThread().name}")
@@ -18,6 +19,7 @@ fun execBackground(action: suspend () -> Unit) {
     }
 }
 
+@DelicateCoroutinesApi
 fun execMain(action: suspend () -> Unit) {
     GlobalScope.launch(context = Dispatchers.Main) {
         println("Thread execMain: ${Thread.currentThread().name}")
@@ -29,6 +31,7 @@ private fun getUser(userId: String): User {
     return User(userId, "Hello")
 }
 
+@DelicateCoroutinesApi
 fun main() {
 
     execBackground {

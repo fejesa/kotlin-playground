@@ -1,10 +1,8 @@
 package org.example
 
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
+@DelicateCoroutinesApi
 fun main() {
     val job1 = GlobalScope.launch(start = CoroutineStart.LAZY) {
         delay(200)

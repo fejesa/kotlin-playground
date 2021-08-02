@@ -2,6 +2,7 @@ package org.example
 
 import kotlinx.coroutines.*
 
+@DelicateCoroutinesApi
 fun main() = runBlocking {
     val exHandler = CoroutineExceptionHandler {_, t ->
         println("Caught exception $t")
@@ -13,7 +14,7 @@ fun main() = runBlocking {
         val childJob = launch {
             println("Child - ${java.lang.Thread.currentThread().name}")
 
-            val subChildJob = launch {
+           launch {
                 println("Sub-Child - ${java.lang.Thread.currentThread().name}")
 
                 launch {

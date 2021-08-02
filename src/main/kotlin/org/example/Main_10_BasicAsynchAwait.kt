@@ -1,16 +1,15 @@
 package org.example
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
+@DelicateCoroutinesApi
 private fun getUserFromNetwork(userId: String): Deferred<User> = GlobalScope.async {
     Thread.sleep(3000)
     println("Thread fun: ${Thread.currentThread().name}")
     User(userId, "Hello")
 }
 
+@DelicateCoroutinesApi
 fun main() {
     val userId = "100"
 
