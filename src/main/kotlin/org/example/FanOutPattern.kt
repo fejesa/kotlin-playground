@@ -36,8 +36,8 @@ fun main() {
     runBlocking {
         val numbersChannel = Channel<Int>()
 
-        val evenChannel = Channel<Int>()
-        val otherChannel = Channel<Int>()
+        val firstChannel = Channel<Int>()
+        val secondChannel = Channel<Int>()
 
         GlobalScope.launch(Dispatchers.Default) {
             produceNumbers(50).forEachIndexed {i, e ->
@@ -47,8 +47,8 @@ fun main() {
         }
 
         val mux = Multiplexer(
-            evenChannel to {n: Int -> isDivisibleAll(n, listOf(11))},
-            otherChannel to {n: Int -> isDivisibleAll(n, listOf(2, 3, 5))}
+            firstChannel to { n: Int -> isDivisibleAll(n, listOf(11))},
+            secondChannel to { n: Int -> isDivisibleAll(n, listOf(2, 3, 5))}
         )
 
         GlobalScope.launch(Dispatchers.Default) {
@@ -56,13 +56,13 @@ fun main() {
         }
 
         GlobalScope.launch(Dispatchers.Default) {
-            for (n in evenChannel) {
+            for (n in firstChannel) {
                 println("Received even: $n - ${Thread.currentThread().name}")
             }
         }
 
         GlobalScope.launch(Dispatchers.Default) {
-            for (n in otherChannel) {
+            for (n in secondChannel) {
                 println("Received other: $n - ${Thread.currentThread().name}")
             }
         }
