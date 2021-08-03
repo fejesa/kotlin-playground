@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.random.Random
 
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 fun main() = runBlocking<Unit> {
 
     val itemNums = 10
