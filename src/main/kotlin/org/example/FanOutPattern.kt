@@ -12,9 +12,9 @@ class Multiplexer<E>(private vararg val filters: Filter<E>) {
 
     suspend fun consume(receive: ReceiveChannel<E>) {
         for (i in receive) {
+            println("Consume ($i) - ${Thread.currentThread().name}")
             for (filter in filters) {
                 if (filter.second(i)) {
-                    println("Consume ($i) - ${Thread.currentThread().name}")
                     filter.first.send(i)
                 }
             }
@@ -58,13 +58,13 @@ fun main() {
 
         GlobalScope.launch(Dispatchers.Default) {
             for (n in firstChannel) {
-                println("Received even: $n - ${Thread.currentThread().name}")
+                println("Received in first: $n - ${Thread.currentThread().name}")
             }
         }
 
         GlobalScope.launch(Dispatchers.Default) {
             for (n in secondChannel) {
-                println("Received other: $n - ${Thread.currentThread().name}")
+                println("Received in second: $n - ${Thread.currentThread().name}")
             }
         }
     }
