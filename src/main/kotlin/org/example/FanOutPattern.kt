@@ -14,6 +14,7 @@ class Multiplexer<E>(private vararg val filters: Filter<E>) {
         for (i in receive) {
             for (filter in filters) {
                 if (filter.second(i)) {
+                    println("Consume ($i) - ${Thread.currentThread().name}")
                     filter.first.send(i)
                 }
             }
