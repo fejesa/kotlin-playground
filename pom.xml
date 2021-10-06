@@ -13,6 +13,8 @@
     <maven.compiler.target>11</maven.compiler.target>
     <kotlin.version>1.5.21</kotlin.version>
     <kotlin.coroutines.version>1.5.1</kotlin.coroutines.version>
+    <ktor.version>1.6.4</ktor.version>
+    <logback_version>1.2.5</logback_version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -44,11 +46,45 @@
       <version>${kotlin.coroutines.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.google.android</groupId>
-      <artifactId>android</artifactId>
-      <version>4.1.1.4</version>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-core</artifactId>
+      <version>${ktor.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-netty</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-client-core</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-client-logging</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-client-logging-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-client-apache</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.12</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback_version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
