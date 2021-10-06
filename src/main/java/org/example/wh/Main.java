@@ -4,6 +4,9 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import org.example.integration.Processor;
+import org.example.integration.WHRequest;
+import org.example.integration.WHResult;
 
 public class Main {
 

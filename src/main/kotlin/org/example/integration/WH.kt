@@ -1,5 +1,6 @@
-package org.example.wh
+package org.example.integration
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
@@ -12,12 +13,14 @@ data class WHRequest(val id: String)
 
 data class WHResult(val request: WHRequest, var result: Int)
 
+@DelicateCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 class Processor {
 
     private val channel = Channel<Pair<WHRequest, CompletableFuture<WHResult>>>()
 
     init {
-        val receiveJob = GlobalScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             try {
                 while (!channel.isClosedForReceive) {
                     val item = channel.receive()
@@ -40,7 +43,7 @@ class Processor {
 
     }
 
-    private suspend fun process(item: Pair<WHRequest, CompletableFuture<WHResult>>) {
+    private fun process(item: Pair<WHRequest, CompletableFuture<WHResult>>) {
         val request = item.first
         val result = item.second
         println("${java.lang.Thread.currentThread().name} - Process: $request")

@@ -27,7 +27,7 @@ fun execMain(action: suspend () -> Unit) {
     }
 }
 
-private fun getUser(userId: String): User {
+fun getUser(userId: String): User {
     return User(userId, "Hello")
 }
 
