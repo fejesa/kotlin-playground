@@ -14,6 +14,7 @@ import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newFixedThreadPoolContext
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
 
 data class Request(val id: String, val time: LocalTime)
@@ -75,9 +76,9 @@ class Processor {
             }
             trace("After scheduled processing", request)
             return future
+        } else {
+            throw RuntimeException()
         }
-        throw RuntimeException()
-
     }
 
     private suspend fun exec(item: Pair<Request, CompletableFuture<Response>>) {
@@ -94,7 +95,9 @@ class Processor {
         result.complete(Response(request, Result.success(response.status.value)))
     }
 
+    private val TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
+
     private fun trace(msg: String, request: Request) {
-        println("${java.lang.Thread.currentThread().name} - $msg: $request")
+        println("${LocalTime.now().format(TIME_FORMATTER)} [${java.lang.Thread.currentThread().name}] - $msg: $request")
     }
 }

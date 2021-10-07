@@ -2,6 +2,7 @@ package org.example.integration;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -38,7 +39,7 @@ class Consumer {
 
     public void sink(Response response) {
         var duration = Duration.between(response.getRequest().getTime(), LocalTime.now());
-        log("Got Result: " + response + " in (ms): " + duration.toMillis());
+        trace("Got Result: " + response + " in (ms): " + duration.toMillis());
     }
 
     public Stream<Request> source() {
@@ -49,12 +50,14 @@ class Consumer {
         var uuid = UUID.randomUUID().toString();
         var index = uuid.indexOf('-');
         var id = counter.incrementAndGet() + "-" + uuid.substring(0, index);
-        log("Create Request: " + id);
+        trace("Create Request: " + id);
         return new Request(id, LocalTime.now());
     }
 
-    private void log(Object obj) {
-        System.out.println(Thread.currentThread().getName() + " - " + obj);
+    private DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+
+    private void trace(Object obj) {
+        System.out.println(LocalTime.now().format(TIME_FORMATTER) + " [" + Thread.currentThread().getName() + "] " + obj);
     }
 }
 
@@ -66,21 +69,18 @@ class CustomThreadFactory implements ThreadFactory {
 
     CustomThreadFactory(String prefix) {
         SecurityManager s = System.getSecurityManager();
-        group = (s != null) ? s.getThreadGroup() :
-            Thread.currentThread().getThreadGroup();
-        namePrefix = prefix + "-" +
-            poolNumber.getAndIncrement() +
-            "-thread-";
+        group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+        namePrefix = prefix + "-" + poolNumber.getAndIncrement() + "-thread-";
     }
 
     public Thread newThread(Runnable r) {
-        Thread t = new Thread(group, r,
-            namePrefix + threadNumber.getAndIncrement(),
-            0);
-        if (t.isDaemon())
+        Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(),0);
+        if (t.isDaemon()) {
             t.setDaemon(false);
-        if (t.getPriority() != Thread.NORM_PRIORITY)
+        }
+        if (t.getPriority() != Thread.NORM_PRIORITY) {
             t.setPriority(Thread.NORM_PRIORITY);
+        }
         return t;
     }
 }
