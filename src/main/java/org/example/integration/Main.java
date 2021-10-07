@@ -14,6 +14,10 @@ import java.util.stream.Stream;
 public class Main {
 
     public static void main(String[] args) {
+
+        var batch = 20;
+        var period = 2500;
+
         var sourceExecutor = Executors.newSingleThreadScheduledExecutor(new CustomThreadFactory("source"));
         var sinkExecutor = Executors.newFixedThreadPool(5, new CustomThreadFactory("sink"));
 
@@ -21,7 +25,7 @@ public class Main {
         final Consumer consumer = new Consumer();
         sourceExecutor.scheduleAtFixedRate(() -> consumer
             .source()
-            .limit(2)
+            .limit(batch)
             .forEach(f -> {
                 processor.process(f)
                     .thenAcceptAsync(consumer::sink, sinkExecutor)
@@ -29,7 +33,7 @@ public class Main {
                         System.out.println("Error:" + e.getMessage());
                         return null;
                     });
-            }), 0, 5000, TimeUnit.MILLISECONDS);
+            }), 0, period, TimeUnit.MILLISECONDS);
     }
 }
 
@@ -57,7 +61,7 @@ class Consumer {
     private DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     private void trace(Object obj) {
-        System.out.println(LocalTime.now().format(TIME_FORMATTER) + " [" + Thread.currentThread().getName() + "] " + obj);
+        System.out.println(LocalTime.now().format(TIME_FORMATTER) + " [" + Thread.currentThread().getName() + "] - " + obj);
     }
 }
 
