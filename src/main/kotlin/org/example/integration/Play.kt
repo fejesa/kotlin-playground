@@ -7,12 +7,12 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.future.asDeferred
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.newFixedThreadPoolContext
 import java.time.LocalTime
 import java.util.concurrent.CompletableFuture
 
@@ -45,10 +45,12 @@ val client = HttpClient(Apache) {
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 class Processor {
 
-    private val channel = Channel<Pair<Request, CompletableFuture<Response>>>(1000)
+    private val channel = Channel<Pair<Request, CompletableFuture<Response>>>(capacity = Channel.UNLIMITED)
+
+    private val dispatcher = newFixedThreadPoolContext(5, "process")
 
     init {
-        GlobalScope.launch(Dispatchers.Default) {
+        GlobalScope.launch(dispatcher) {
             try {
                 while (!channel.isClosedForReceive) {
                     val item = channel.receive()
@@ -65,9 +67,11 @@ class Processor {
         val result = channel.trySend(item)
 
         if (result.isSuccess) {
-            val future = GlobalScope.future {
-                trace("Await", request)
-                item.second.asDeferred().await()
+            val future = GlobalScope.future(dispatcher) {
+                trace("Before await", request)
+                val t = item.second.asDeferred().await()
+                trace("After Await", request)
+                t
             }
             trace("After scheduled processing", request)
             return future
