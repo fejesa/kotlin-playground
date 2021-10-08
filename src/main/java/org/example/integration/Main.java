@@ -2,7 +2,6 @@ package org.example.integration;
 
 import java.time.Duration;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -10,18 +9,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        var batch = 20;
-        var period = 2500;
+        var batch = 10;
+        var period = 5000;
 
         var sourceExecutor = Executors.newSingleThreadScheduledExecutor(new CustomThreadFactory("source"));
-        var sinkExecutor = Executors.newFixedThreadPool(5, new CustomThreadFactory("sink"));
+        var sinkExecutor = Executors.newFixedThreadPool(2, new CustomThreadFactory("sink"));
 
-        final Processor processor = new Processor();
+        final Processor processor = new PlayProcessor();
         final Consumer consumer = new Consumer();
         sourceExecutor.scheduleAtFixedRate(() -> consumer
             .source()
@@ -30,7 +31,7 @@ public class Main {
                 processor.process(f)
                     .thenAcceptAsync(consumer::sink, sinkExecutor)
                     .exceptionally(e -> {
-                        System.out.println("Error:" + e.getMessage());
+                        e.printStackTrace();
                         return null;
                     });
             }), 0, period, TimeUnit.MILLISECONDS);
@@ -39,11 +40,13 @@ public class Main {
 
 class Consumer {
 
+    private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
+
     private final AtomicLong counter = new AtomicLong();
 
     public void sink(Response response) {
         var duration = Duration.between(response.getRequest().getTime(), LocalTime.now());
-        trace("Got Result: " + response + " in (ms): " + duration.toMillis());
+        logger.info("Got Result: {} in {} (ms)", response, duration.toMillis());
     }
 
     public Stream<Request> source() {
@@ -54,14 +57,8 @@ class Consumer {
         var uuid = UUID.randomUUID().toString();
         var index = uuid.indexOf('-');
         var id = counter.incrementAndGet() + "-" + uuid.substring(0, index);
-        trace("Create Request: " + id);
+        logger.info("Create Request: {}", id);
         return new Request(id, LocalTime.now());
-    }
-
-    private DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
-
-    private void trace(Object obj) {
-        System.out.println(LocalTime.now().format(TIME_FORMATTER) + " [" + Thread.currentThread().getName() + "] - " + obj);
     }
 }
 

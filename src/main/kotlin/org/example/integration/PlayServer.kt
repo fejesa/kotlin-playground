@@ -16,8 +16,7 @@ fun main() {
     embeddedServer(Netty, port = 8080) {
         routing {
             get("/play") {
-                println("GET")
-                call.respond(HttpStatusCode.OK)
+                call.respondText("Let's play", status = HttpStatusCode.OK)
             }
             post("/play") {
                 println("POST: ${call.receiveText()}")
