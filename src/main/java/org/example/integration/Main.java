@@ -22,7 +22,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        var batch = 2;
+        var batch = 1;
         var period = 2000;
         var endpoints = getEndpoints("endpoints.txt");
 

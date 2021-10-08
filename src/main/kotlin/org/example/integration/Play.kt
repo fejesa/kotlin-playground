@@ -13,6 +13,7 @@ import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newFixedThreadPoolContext
 import mu.KotlinLogging
+import org.apache.http.impl.nio.reactor.IOReactorConfig
 import java.util.concurrent.CompletableFuture
 
 val client = HttpClient(Apache) {
@@ -26,9 +27,14 @@ val client = HttpClient(Apache) {
         connectionRequestTimeout = 20_000
         threadsCount = 2
         customizeClient {
-            setMaxConnTotal(100)
-            setMaxConnPerRoute(200)
+            setMaxConnTotal(20)
+            setMaxConnPerRoute(10)
             disableConnectionState()
+            setDefaultIOReactorConfig(
+                IOReactorConfig.custom()
+                    .setIoThreadCount(1)
+                    .build()
+            )
         }
         customizeRequest {
             setRedirectsEnabled(false)
