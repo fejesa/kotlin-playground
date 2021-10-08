@@ -7,7 +7,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ public class Main {
         var sinkExecutor = Executors.newFixedThreadPool(2, new CustomThreadFactory("sink"));
 
         final Processor processor = new PlayProcessor();
-        final Consumer consumer = new Consumer();
+        final Consumer consumer = new Consumer(0);
         sourceExecutor.scheduleAtFixedRate(() -> consumer
             .source()
             .limit(batch)
@@ -42,7 +41,13 @@ class Consumer {
 
     private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
 
-    private final AtomicLong counter = new AtomicLong();
+    private final AtomicInteger counter = new AtomicInteger();
+
+    private final int cid;
+
+    Consumer(int cid) {
+        this.cid = cid;
+    }
 
     public void sink(Response response) {
         var duration = Duration.between(response.getRequest().getTime(), LocalTime.now());
@@ -56,7 +61,7 @@ class Consumer {
     private Request createRequest() {
         var uuid = UUID.randomUUID().toString();
         var index = uuid.indexOf('-');
-        var id = counter.incrementAndGet() + "-" + uuid.substring(0, index);
+        var id = new RequestId(cid, counter.incrementAndGet(), uuid.substring(0, index));
         logger.info("Create Request: {}", id);
         return new Request(id, LocalTime.now());
     }

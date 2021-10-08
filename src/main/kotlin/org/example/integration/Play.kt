@@ -87,7 +87,7 @@ class PlayProcessor: Processor {
 
         val response: HttpResponse = client.post(endpoint) {
             contentType(ContentType.Application.Json)
-            body = """{ "id": "${request.id}" }"""
+            body = """{ "id": "${request.getId()}" }"""
         }
 
         logger.info { "After HTTP call: $request" }

@@ -3,9 +3,11 @@ package org.example.integration
 import java.time.LocalTime
 import java.util.concurrent.CompletableFuture
 
-data class Request(val id: String, val time: LocalTime)
+data class RequestId(val id: Int, val counter: Int, val uuid: String)
+data class Request(val rid: RequestId, val time: LocalTime) {
+    fun getId() = String.format("%d-%d-%s", rid.id, rid.counter, rid.uuid)
+}
 data class Response(val request: Request, var result: Result<Int>)
-data class RequestId(val pid: Int, val counter: Int, val uuid: String)
 
 interface Processor {
     fun process(request: Request): CompletableFuture<Response>
