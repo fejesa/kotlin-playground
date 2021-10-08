@@ -24,6 +24,7 @@ val client = HttpClient(Apache) {
         socketTimeout = 10_000
         connectTimeout = 10_000
         connectionRequestTimeout = 20_000
+        threadsCount = 2
         customizeClient {
             setMaxConnTotal(100)
             setMaxConnPerRoute(200)
@@ -36,33 +37,36 @@ val client = HttpClient(Apache) {
     }
 }
 
-const val endpoint = "http://localhost:8080/play"
-
 @DelicateCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
-class PlayProcessor: Processor {
+class PlayProcessor(channelCount: Int): Processor {
 
     private val logger = KotlinLogging.logger {}
 
-    private val channel = Channel<Pair<Request, CompletableFuture<Response>>>(capacity = Channel.UNLIMITED)
+    private lateinit var channels: List<Channel<Pair<Request, CompletableFuture<Response>>>>
 
     private val dispatcher = newFixedThreadPoolContext(5, "process")
 
     init {
-        GlobalScope.launch(dispatcher) {
-            try {
-                while (!channel.isClosedForReceive) {
-                    val item = channel.receive()
-                    exec(item)
+        channels = List(channelCount) { Channel<Pair<Request, CompletableFuture<Response>>>(capacity = Channel.UNLIMITED) }
+        for (it in 0 until channelCount) {
+            GlobalScope.launch(dispatcher) {
+                try {
+                    val channel = channels[it]
+                    while (!channel.isClosedForReceive) {
+                        val item = channel.receive()
+                        exec(item)
+                    }
+                } catch (e: Throwable) {
+                    logger.error { "$e" }
                 }
-            } catch (e: Throwable) {
-                logger.error { "$e" }
             }
         }
     }
 
     override fun process(request: Request): CompletableFuture<Response> {
         val item = Pair(request, CompletableFuture<Response>())
+        val channel = channels[request.rid.id]
         val result = channel.trySend(item)
 
         if (result.isSuccess) {
@@ -85,7 +89,7 @@ class PlayProcessor: Processor {
 
         logger.info{"Enqueue HTTP call: $request" }
 
-        val response: HttpResponse = client.post(endpoint) {
+        val response: HttpResponse = client.post(request.endpoint) {
             contentType(ContentType.Application.Json)
             body = """{ "id": "${request.getId()}" }"""
         }

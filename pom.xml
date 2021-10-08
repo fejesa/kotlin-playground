@@ -14,10 +14,11 @@
     <kotlin.version>1.5.21</kotlin.version>
     <kotlin.coroutines.version>1.5.1</kotlin.coroutines.version>
     <ktor.version>1.6.4</ktor.version>
-    <logback_version>1.2.5</logback_version>
+    <logback.version>1.2.5</logback.version>
     <slf4j.version>1.7.32</slf4j.version>
     <kotlin.logging.version>2.0.11</kotlin.logging.version>
     <apache.httpclient.version>4.5.12</apache.httpclient.version>
+    <apache.logging.log4j.version>2.11.2</apache.logging.log4j.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -86,7 +87,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>${logback_version}</version>
+      <version>${logback.version}</version>
     </dependency>
 
     <dependency>
@@ -106,16 +107,33 @@
       <artifactId>kotlin-logging-jvm</artifactId>
       <version>${kotlin.logging.version}</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>${slf4j.version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
+    <!--dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${apache.logging.log4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${apache.logging.log4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${apache.logging.log4j.version}</version>
+    </dependency-->
 
   </dependencies>
 
@@ -179,6 +197,12 @@
         </executions>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
   </build>
 
 </project>

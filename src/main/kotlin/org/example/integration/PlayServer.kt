@@ -9,11 +9,12 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlin.random.Random
 
-fun main() {
+fun main(args: Array<String>) {
 
     val rnd = Random
+    val serverPort = if(args.isEmpty()) 8080 else Integer.valueOf(args[0])
 
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(Netty, port = serverPort) {
         routing {
             get("/play") {
                 call.respondText("Let's play", status = HttpStatusCode.OK)
